@@ -1,4 +1,4 @@
-var ViewModel = function(){
+var Cat = function(){
   this.clickCount = ko.observable(0);
   this.name = ko.observable('Joey');
   this.imgSrc = ko.observable('img/Joey.jpg');
@@ -22,9 +22,13 @@ var ViewModel = function(){
     }
     return title;
   },this);
+}
+
+var ViewModel = function(){
+  this.currentCat = ko.observable(new Cat());
 
   this.incrementCounter = function(){
-    this.clickCount(this.clickCount()+1);
+    this.currentCat().clickCount(this.currentCat().clickCount()+1);
   };
 }
 
