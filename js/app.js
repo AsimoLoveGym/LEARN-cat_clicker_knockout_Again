@@ -1,93 +1,56 @@
-var initialCats = [
-{
-  clickCount: 0,
-  name: "Ross",
-  imgSrc: "img/Ross.jpg",
-  imgAttribution: "",
-  nicknames: ['Roro','SS','Little Dinosor']
-},
-{
-  clickCount: 0,
-  name: "Chandler",
-  imgSrc: "img/Chandler.jpg",
-  imgAttribution: "",
-  nicknames: ['Bing','OMG','Fun Guy']
-},
-{
-  clickCount: 0,
-  name: "Joey",
-  imgSrc: "img/Joey.jpg",
-  imgAttribution: "",
-  nicknames: ['Little General','Playboy','Italian boy']
-},
-{
-  clickCount: 0,
-  name: "Phoebe",
-  imgSrc: "img/Phoebe.jpg",
-  imgAttribution: "",
-  nicknames: ['FUNFUN','Phoephoe','Smelly Cat']
-},
-{
-  clickCount: 0,
-  name: "Monica",
-  imgSrc: "img/Monica.jpg",
-  imgAttribution: "",
-  nicknames: ['Momo','Chief','Lala']
-},
-{
-  clickCount: 0,
-  name: "Rachel",
-  imgSrc: "img/Rachel.jpg",
-  imgAttribution: "",
-  nicknames: ['Rachel','Shoe','Pretty Girl']
-}
-]
+var locations = [
+        {title: 'Sakanaya Restaurant, Japanese restaurant', location: {lat: 40.110155, lng: -88.233122}},
+        {title: 'Le Peep, My favorite brunch restaurant', location: {lat: 40.087095, lng: -88.247949}},
+        {title: 'The Art Theater', location: {lat: 40.118571, lng: -88.244699}},
+        {title: 'The Red Lion', location: {lat: 40.109972, lng: -88.235615}},
+        {title: 'Crystal Lake Park Family Aquatic Center', location: {lat: 40.12518, lng: -88.209342}},
+        {title: 'Activities and Recreation Center', location: {lat: 40.10083, lng: -88.235555}},
+        {title: 'Lai Lai Wok, my favorite Chinese restaurant', location: {lat: 40.110455, lng: -88.233305}}
+      ];
 
-var Cat = function(data){
-  this.clickCount = ko.observable(data.clickCount);
-  this.name = ko.observable(data.name);
-  this.imgSrc = ko.observable(data.imgSrc);
-  this.nicknames = ko.observableArray(data.nicknames);
-
-  this.title = ko.computed(function(){
-    var title;
-    var clicks = this.clickCount();
-    if (clicks < 10) {
-      title = 'NewBorn';
-    } else if (clicks < 50){
-      title = 'Infant';
-    } else if (clicks < 100){
-      title = 'Child';
-    } else if (clicks < 200){
-      title = 'Teen';
-    } else if (clicks < 500){
-      title = 'Adult';
-    } else {
-      title = 'Ninja';
-    }
-    return title;
-  },this);
-}
+      // console.log(locations);
 
 var ViewModel = function(){
-  var self = this;
+    this.filter= ko.observable("");
 
-  this.catList = ko.observableArray([]);
+    this.filteredItems = ko.computed(function() {
+        var filter = this.filter().toLowerCase();
+        if (!filter) {
+            return locations;
+        } else {
+            return ko.utils.arrayFilter(locations, function(item) {
+                // return stringStartsWith(item.title.toLowerCase(), filter);
+                if(item.title.toLowerCase().indexOf(filter) > -1)
+                  return true;
+            });
+        }
+    },this);
 
-  initialCats.forEach(function(catItem){
-    self.catList.push(new Cat(catItem));
-  });
+    console.log(this.filteredItems());
 
-  this.currentCat = ko.observable(this.catList()[0]);
+    this.locationsList = ko.observableArray(this.filteredItems());
+    console.log(this.locationsList());
+}
 
-  this.incrementCounter = function(){
-    self.currentCat().clickCount(self.currentCat().clickCount()+1);
-  };
+//ko.utils.arrayFilter - filter the items using the filter text
+// viewModel.filteredItems = ko.computed(function() {
+//     var filter = this.filter().toLowerCase();
+//     if (!filter) {
+//         return locations;
+//     } else {
+//         return ko.utils.arrayFilter(locations, function(item) {
+//             return stringStartsWith(item.title.toLowerCase(), filter);
+//         });
+//     }
+// }, viewModel);
 
-  this.setCat = function(){
-    self.currentCat(this);
-    // console.log('hi');
-  };
+var stringStartsWith = function (string, startsWith) {
+    string = string || "";
+    if (startsWith.length > string.length)
+        return false;
+    return string.substring(0, startsWith.length) === startsWith;
 }
 
 ko.applyBindings(new ViewModel());
+
+// ko.applyBindings(ViewModel());
